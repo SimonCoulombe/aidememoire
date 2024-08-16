@@ -17,7 +17,7 @@ language:
   title-block-author-single: "Auteur" #  i know my gender..https://github.com/quarto-dev/quarto-cli/discussions/2796#discussioncomment-3851669
 format:
   html:
-    theme: cerulean
+    theme: simplex
     css: styles.css
     code-overflow: wrap
     code-fold: true
