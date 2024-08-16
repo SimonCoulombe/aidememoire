@@ -6,7 +6,7 @@ website:
   site-url: https://aidememoire.netlify.app
   sidebar:
     contents:
-      - r.qmd
+      - rstats.qmd
       - sql.qmd
     style: "docked"  
     search: true

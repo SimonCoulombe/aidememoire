@@ -1,14 +1,6 @@
 ---
-title: "aidememoire"
-listing:
-  contents: posts
-  sort: "date desc"
-  type: default
-  categories: true
-  sort-ui: false
-  filter-ui: false
-page-layout: full
-title-block-banner: true
+title: "aide-memoire"
 ---
 
+Bienvenue sur mon aide-memoire, des snippets de code que je veux garder a porter de la main.
 

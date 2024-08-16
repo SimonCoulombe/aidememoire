@@ -1,13 +1,14 @@
 ---
 title: "SQL"
 listing:
-  contents: "SQL"
+  contents: "sql"
+  fields: [date, title] ## pas besoin de author, on sait que c'est mo!
   type: table
   sort: "date desc"
-  categories: true
-  sort-ui: true
+  categories: false
+  sort-ui: false
   filter-ui: true
-  feed: true
+  feed: false
 page-layout: full
 title-block-banner: true
 ---
