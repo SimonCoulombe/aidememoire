@@ -3,6 +3,7 @@ project:
 
 website:
   title: "aidememoire"
+  site-url: https://aidememoire.netlify.app
   navbar:
     right:
       - about.qmd
@@ -10,10 +11,22 @@ website:
         href: https://github.com/
       - icon: twitter
         href: https://twitter.com
+lang: fr    # default post language is french
+lightbox: auto    # allows clicking on images to enlarge them
+language: 
+  title-block-author-single: "Auteur" #  i know my gender..https://github.com/quarto-dev/quarto-cli/discussions/2796#discussioncomment-3851669
 format:
   html:
-    theme: cosmo
+    theme: cerulean
     css: styles.css
-
+    code-overflow: wrap
+    code-fold: true
+    code-folding: show
+    code-summary: "\\<code\\>" 
+    code-copy: hover # the copy code icon appears when hovering above code chunk
+    email-obfuscation: javascript
+editor: source
+execute:
+  freeze: auto
 
 
