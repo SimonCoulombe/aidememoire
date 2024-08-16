@@ -4,13 +4,17 @@ project:
 website:
   title: "aidememoire"
   site-url: https://aidememoire.netlify.app
-  navbar:
-    right:
-      - about.qmd
+  sidebar:
+    contents:
+      - r.qmd
+      - sql.qmd
+    style: "docked"  
+    search: true
+    collapse-level: 1
+    tools:
       - icon: github
-        href: https://github.com/
-      - icon: twitter
-        href: https://twitter.com
+        href: https://github.com/simoncoulombe/aidememoire
+
 lang: fr    # default post language is french
 lightbox: auto    # allows clicking on images to enlarge them
 language: 
@@ -28,5 +32,4 @@ format:
 editor: source
 execute:
   freeze: auto
-
 
