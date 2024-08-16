@@ -1,5 +1,6 @@
 ---
-title: "placeholder"
+title: "placeholder2"
+author: Simon Coulombe
 description: |
   A placeholder
 date: 2024-08-16
