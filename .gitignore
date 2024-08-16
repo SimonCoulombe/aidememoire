@@ -2,3 +2,12 @@
 .Rhistory
 .RData
 .Ruserdata
+
+
+/.quarto/
+_publish.yml
+/_site/
+/site_libs
+.httr-oauth
+.quarto
+.Rdata
