@@ -3,6 +3,7 @@ project:
 
 website:
   title: "aidememoire"
+  site-url: https://aidememoire.netlify.app
   navbar:
     right:
       - about.qmd
