@@ -1,0 +1,14 @@
+---
+title: "Insert rows azure synapse"
+date: "2024-08-16"
+format:
+  html:
+    code-fold: false
+---
+  
+```bash
+INSERT INTO my_schema.my_table( character_column_name, numeric_column_name)
+values('character_column_value', 999)
+```
+
+

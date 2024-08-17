@@ -1,0 +1,17 @@
+---
+title: "List tables in a azure synapse schema"
+date: "2024-08-16"
+format:
+  html:
+    code-fold: false
+---
+
+
+  
+```bash
+tables_available <- dbGetQuery(con,
+                               "SELECT table_name FROM information_schema.tables
+                   WHERE table_schema='my_schema'")
+```
+
+
