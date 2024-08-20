@@ -1,0 +1,18 @@
+---
+title: "Update a table in an azure synapse schema"
+date: "2024-08-16"
+format:
+  html:
+    code-fold: false
+---
+
+
+  
+```bash
+UPDATE my_schema.my_table
+SET my_variable=1
+WHERE 1=1;
+
+```
+
+

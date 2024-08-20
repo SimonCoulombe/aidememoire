@@ -6,9 +6,9 @@ website:
   site-url: https://aidememoire.netlify.app
   sidebar:
     contents:
-      - rstats.qmd
-      - python.qmd
-      - sql.qmd
+      - rstats.qmd  
+      - sql.qmd        
+      - python.qmd  
     style: "docked"  
     search: true
     collapse-level: 1
