@@ -8,16 +8,13 @@ format:
     code-fold: false
 ---
 
-To create a venv:
 
-```bash
-python3.11 -m venv ./venv
-```
+nobody will remember:
+- your salary
+- how "busy you were"
+- how many hours you worked
 
-and to activate it:
-
-```bash
-source venv/bin/activate
-```
-
-et voila
+people will remember:
+- python3.12 -m venv venv
+- source venv/bin/activate
+- pip install -r requirements.txt
