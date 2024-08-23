@@ -1,0 +1,87 @@
+---
+title: "extract actual sql code from dbplyr::show_query(), "
+author: Simon Coulombe
+description: |
+  How to combine normal SQL code to code generated using dplyr and run everything using dbExecute  
+date: 2024-08-16
+format:
+  html:
+    code-fold: false
+---
+
+```{r}
+library(dplyr)
+library(dbplyr)
+library(DBI)
+library("RSQLite")
+con <- DBI::dbConnect(RSQLite::SQLite(), dbname = ":memory:")
+```
+
+```{r}
+copy_to(con, iris, "iris")
+```
+
+```{r}
+iris_db <- tbl(con, "iris")
+```
+
+create a query using dplyr because it is easy
+
+```{r}
+query_for_temp_table <- iris_db %>% 
+  head(5) 
+
+query_for_temp_table_text <- query_for_temp_table %>%
+  dbplyr:::sql_render() %>%
+  as.character()
+
+query_for_temp_table_text
+```
+
+
+let's read a "case when" query from a .sql file:  Here I put a [] around the name of Sepal.Width to deal with the dot in the field name:
+
+```{r}
+sepal_size_sql <-  tempfile()
+writeLines(c( 'CASE',
+              'WHEN [Sepal.Width] > 5 then "big"',
+              'else "small"',
+              'END AS sepal_size'
+), sepal_size_sql)
+
+
+sql_queries <- list()
+sql_queries[["sepal_size"]] <- readr::read_lines(sepal_size_sql) %>%
+  glue::glue_collapse(sep = "\n")
+
+sql_queries[["sepal_size"]]
+```
+
+
+create a query that applies the content of sepal_size.sql to  the output of my temp query I generated using dplyr.
+note that the temp table subquery must be named using 'as sub':
+note that the "sql_queries" list  could have more than 1 item.  We could read from multiple .sql files here.
+
+```{r}
+
+query_for_final_table <- glue::glue('create table final as select *,  
+{paste(sql_queries, collapse = ",")}
+                       from ({query_for_temp_table_text}) as sub
+                       ')
+
+query_for_final_table 
+```
+
+
+run the final query using dbExecute
+```{r}
+dbExecute(con, query_for_final_table)
+
+```
+
+It worked!
+We applied the code for a "case when" we read in an .sql file to a subquery that was defined using dplyr!
+```{r}
+dbGetQuery(con, "select * from final")
+```
+
