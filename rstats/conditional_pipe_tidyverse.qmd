@@ -1,0 +1,31 @@
+---
+title: "conditionally execute something in a tidyverse pipe"
+author: Simon Coulombe
+description: |
+  Welcome to {} hell
+date: 2024-08-16
+format:
+  html:
+    code-fold: false
+---
+
+I just always forget this one.. you need to wrap the {if} inside the {}
+```{r}
+library(dplyr)
+iris %>% head() %>%
+  {
+    if (TRUE) {
+      dplyr::select(., contains("Sepal")) %>% 
+      dplyr::mutate(., addition = Sepal.Length + Sepal.Width )
+    } else {.}
+  }
+```
+```{r}
+iris %>% head() %>%
+  {
+    if (FALSE) {
+      dplyr::select(., contains("Sepal")) %>% 
+      dplyr::mutate(., addition = Sepal.Length + Sepal.Width )
+    } else {.}
+  }
+```
