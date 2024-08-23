@@ -1,0 +1,37 @@
+---
+title: "rename_columns_using_table of new and old names"
+author: Simon Coulombe
+description: |
+  first time use of tibble::deframe
+date: 2024-08-16
+format:
+  html:
+    code-fold: false
+---
+
+create a function from this code found on stackoverflow  https://stackoverflow.com/questions/67493635/how-to-rename-columns-in-a-table-by-using-a-table-of-old-and-new-names-in-r-tid
+
+'''  
+#' rename_columns_using_table  
+#'  
+#' @param df   
+#' @param rename_table   
+#'  
+#' @return  
+#' @export  
+#'  
+#' @examples  
+#' rename_columns_using_table(iris, dplyr::tribble(  
+#'  ~newname, ~oldname,  
+#'  "sep_length", "Sepal.Length",  
+#'   "set_width", "Sepal.Width"  
+#'  
+#'))  
+rename_columns_using_table <- function(df, rename_table){  
+  df %>%   
+    rename(!!! tibble::deframe(rename_table))    
+    
+}  
+
+'''
+  
