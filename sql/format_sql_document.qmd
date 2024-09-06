@@ -1,0 +1,16 @@
+---
+title: "format sql pretty beautiful using SQLTools"
+date: "2024-08-16"
+format:
+  html:
+    code-fold: false
+---
+  
+https://stackoverflow.com/questions/59802281/visual-studio-code-vs-sql-formatting  
+
+
+Install the SQLTools extension   
+Open your query   
+Press Ctrl+Shift+P  
+Select "Format Document With"  
+Select SQLTools  
