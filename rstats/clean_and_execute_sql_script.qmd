@@ -1,0 +1,180 @@
+---
+title: "Executing an SQL script from R after injecting some values from R in that script"
+author: Simon Coulombe
+description: |
+  Invalid object name...
+date: 2024-09-12
+format:
+  html:
+    code-fold: false
+---
+
+Challenge: I have an old SQL script that I want to run.  I also want to edit a part of that script using a value provided by R.  
+
+Let's say this is my full script that we will want to run.  
+All it does is create a table called "prout" out of thin air, then  creates a new table "prout2" from that first table.  
+We will also want to replace the final table name 'prout2' with some variable.  
+```{r}
+script <- "
+
+/* this query has 
+intentionally messy 
+comments
+*/
+create table prout as 
+  Select 
+    2 as COL_A -- with a comment here
+
+  ;
+-- or wherever
+
+/* and some more commen ts here */
+
+create table prout2  as 
+    Select 
+    * -- with a comment here
+
+    FROM 
+      -- and some helpful comment here
+      prout
+    ;
+    -- or wherever
+
+"    
+```
+
+
+```{r}
+library(dplyr)
+library(dbplyr)
+library(DBI)
+library("RSQLite")
+con <- DBI::dbConnect(RSQLite::SQLite(), dbname = ":memory:")
+
+
+```
+
+
+# Step 1  - cleaning the script    
+
+```{r}
+
+# pass in either a text query or path to a sql file
+clean_script <- function( text_or_path = '//example/path/to/some_query.sql' , echo = FALSE){
+  # modified from Tori Oblad's script https://stackoverflow.com/a/58446028/5657234
+  # if sql path, read, otherwise assume text input
+  if( stringr::str_detect(text_or_path, "(?i)\\.sql$") ){
+    text_or_path <- text_or_path %>% read_lines() %>% stringr::str_c(sep = " ", collapse = "\n")
+  }
+  
+  
+  # echo original query to the console 
+  #  (unnecessary, but helpful for status if passing sequential queries to a db)
+  if(echo){cat("\nThe query you're processing is: \n", text_or_path, "\n\n")}
+  
+  
+  # remove comments 
+  clean_script <- text_or_path %>% 
+    # remove all demarked /*  */ sql comments 
+    gsub(pattern = '/\\*.*?\\*/', replacement = ' ') %>% 
+    # remove all demarked -- comments 
+    gsub(pattern = '--[^\r\n]*', replacement = ' ') %>% 
+    #remove any line break, tab, etc.
+    gsub(pattern = '[\r\n\t\f\v]', replacement = ' ') %>%  
+    # remove extra whitespace 
+    gsub(pattern = ' +', replacement = ' ') 
+
+}
+```
+
+```{r}
+cleaned_script <- clean_script(script)
+cleaned_script
+```
+let's try and execute it 
+```{r}
+dbExecute(con, cleaned_script)
+```
+Here we get a warning that is pretty clear "Ignoring remaining part of query: create table prout2 Select * FROM prout ; ".  This means the 2nd part of the script won'T be executed.  
+
+At work, SQL Server  just tries to run all queries in parallel and will return "Invalid Object Name: prout" because the second script tries to read from a table the first script hasnt created yet.  
+
+# Step 2: split the script into multiple queries and execute them  
+The quick fix is to split the queries and execute them one at a time:   
+
+```{r}
+dbRemoveTable(con, "prout")
+
+
+split_script <- function(script){
+  unlist(strsplit(script, "\\s*;\\s*"))
+}
+
+queries <-split_script(cleaned_script)
+
+
+execute_queries <- function(con, queries){
+  for (query in queries){
+    message("executing query- ", query)
+    dbExecute(con, query)
+  }
+}
+
+execute_queries(con, queries)
+
+```
+Awesome!  
+
+Now let's say that I want the output of the final output table name  to be editable by R.  This is where glue_sql() comes in and it is pretty neat.   
+
+First, we modify the original script to replace 'prout2'  with {output_table_name}.
+
+```{r}
+script_with_editable_table_name <- "
+
+/* this query has 
+intentionally messy 
+comments
+*/
+create table prout as 
+  Select 
+    2 as COL_A -- with a comment here
+
+  ;
+-- or wherever
+
+/* and some more commen ts here */
+
+create table {output_table_name}  as 
+    Select 
+    * -- with a comment here
+
+    FROM 
+      -- and some helpful comment here
+      prout
+    ;
+    -- or wherever
+
+"    
+```
+
+Then we clean the query, and we apply the glue_sql function to all queries:  
+
+```{r}
+dbRemoveTable(con, "prout")
+dbRemoveTable(con, "prout2")
+output_table_name <- "new_table_name"
+cleaned_script <- clean_script(script_with_editable_table_name)
+queries <-  split_script(cleaned_script)
+updated_queries <- purrr::map(queries, ~ .x %>%  glue::glue_sql(.con = con))
+execute_queries(con, updated_queries)
+
+```
+```{r}
+dbGetQuery(con, "select * from new_table_name")
+```
+
+
+Woohoo!
+
+
