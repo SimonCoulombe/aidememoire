@@ -125,6 +125,9 @@ execute_queries(con, queries)
 ```
 Awesome!  
 
+# Step 3 -  edit the SQL script from R to inject some values   
+
+
 Now let's say that I want the output of the final output table name  to be editable by R.  This is where glue_sql() comes in and it is pretty neat.   
 
 First, we modify the original script to replace 'prout2'  with {output_table_name}.
