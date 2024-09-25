@@ -1,0 +1,17 @@
+{
+  "hash": "0059238fff3bf4d38676ba3ad1f9d094",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"function that combines glue_sql + ggplot \"\ndescription: \"\"\nauthor: Simon Coulombe\ndate: 2024-098-24\ncategories: [r, glue_sql]\nlang: fr\n---\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(ggplot2)\nlibrary(dbplyr)\nlibrary(aitoolbox)\nlibrary(dplyr)\nlibrary(DBI)\npool <- aitoolbox::connect_to_azure()\n\nauto_plot <- function(pool, my_variable_name, table1, table2){\n  a_float_table <- DBI::dbQuoteIdentifier(DBI::Id(schema = \"BI_FLOAT_AY\",   table = table1), conn = pool)\n  another_float_table <- DBI::dbQuoteIdentifier(DBI::Id(schema = \"BI_FLOAT_AY\",   table = table2), conn = pool)\n  \n  my_sql_query <- \"\n    SELECT DISTINCT\n    ROLLING_YEAR ,\n    {`my_variable_name`},\n  count(*) as count\n    FROM (\n            select ROLLING_YEAR, {`my_variable_name`}   from {a_float_table}\n            union all\n            select ROLLING_YEAR, {`my_variable_name`}  from {another_float_table}\n  ) as combined\n  GROUP BY ROLLING_YEAR, {`my_variable_name`}\n  \"\n  \n  updated_sql_query <- glue::glue_sql(my_sql_query, .con = pool)\n  downloaded_data <- dbGetQuery(pool, updated_sql_query)\n  \n  downloaded_data %>%\n    ggplot(aes(x = factor(ROLLING_YEAR), y = count, fill = .data[[my_variable_name]])) +\n    geom_col() \n}\nauto_plot(pool = pool ,\n          my_variable_name = \"RISKPROVINCE\", \n          table1 = \"LC_A_240829_090557\", \n          table2 =  \"LC_A_240829_090534\")\n```\n\n::: {.cell-output-display}\n![](glue_sql_function_files/figure-html/unnamed-chunk-1-1.png){width=672}\n:::\n:::\n",
+    "supporting": [
+      "glue_sql_function_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

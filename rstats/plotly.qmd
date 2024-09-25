@@ -1,0 +1,751 @@
+---
+title: "plotly"
+description: "argh"
+author: Simon Coulombe
+date: 2024-098-24
+categories: [r, plotly]
+lang: fr
+---
+
+```{r setup, echo = FALSE}
+library(ggplot2)
+library(plotly)
+library(dplyr)
+library(gapminder)
+library(listviewer)
+pal <- ggokabeito::palette_okabe_ito()
+df <- gapminder::gapminder %>% 
+  filter(country %in% unique(gapminder::gapminder$country)[1:8]) %>% 
+  mutate(date = as.Date(paste0(year, "-01-01")),
+         lifeExp = round(lifeExp, 2)) %>% 
+  filter(year >= 1990) %>% 
+  group_by(year) %>% 
+  mutate(country = factor(country, levels = unique(.$country)),
+         pop_percent =  pop / sum(pop)) %>%
+  ungroup()
+
+df_long <- df %>% 
+  select(country, date, lifeExp, pop_percent) %>% 
+  tidyr::pivot_longer(
+    cols = all_of(c("lifeExp", "pop_percent")),
+    names_to = "variable",
+    values_to = "value"
+  )
+```
+# use plotly::schema()
+
+
+schema allows you to browse available properties
+```{r}
+library(listviewer)
+plotly::schema()
+```
+
+
+# Building a plotly   
+
+
+
+the absolute minimum
+
+```{r}
+plotly::plot_ly(df, x = ~ date, 
+                y = ~ lifeExp, 
+                color =  ~country, 
+                type = "scatter", 
+                mode = "markers+lines")
+```
+
+i like this hovermode   
+
+```{r}
+plotly::plot_ly(df, x = ~ date, 
+                y = ~ lifeExp, 
+                color =  ~country, 
+                type = "scatter", 
+                mode = "markers+lines") %>%
+  plotly::layout(hovermode="x unified") 
+```
+
+adding titles 
+
+```{r}
+plotly::plot_ly(df, x = ~ date, 
+                y = ~ lifeExp, 
+                color =  ~country, 
+                type = "scatter", 
+                mode = "markers+lines") %>%
+  plotly::layout(hovermode="x unified")  %>%
+  plotly::layout(
+    title = list(text = "this is my title"))
+```
+
+adding a subtitle inside the title
+
+```{r}
+plotly::plot_ly(df, x = ~ date, 
+                y = ~ lifeExp, 
+                color =  ~country, 
+                type = "scatter", 
+                mode = "markers+lines") %>%
+  plotly::layout(hovermode="x unified")  %>%
+  plotly::layout(
+    title = list(text = paste0('this is my title',
+                               '<br><sup>This is my subtitle','</sup>')
+    )
+  )
+```
+
+left-align the title    
+
+```{r}
+
+plotly::plot_ly(df, x = ~ date, 
+                y = ~ lifeExp, 
+                color =  ~country, 
+                type = "scatter", 
+                mode = "markers+lines") %>%
+  plotly::layout(hovermode="x unified")  %>%
+  plotly::layout(
+    title = list(text = paste0('this is my title',
+                               '<br><sup>This is my subtitle','</sup>'),
+                 x = 0.02,
+                 xanchor = "left"
+    )
+  )
+
+```
+
+
+
+add some margin  above the title   , remove  some margin to the left of the y axis and below the x axis
+
+
+```{r}
+
+plotly::plot_ly(df, x = ~ date, 
+                y = ~ lifeExp, 
+                color =  ~country, 
+                type = "scatter", 
+                mode = "markers+lines") %>%
+  plotly::layout(hovermode="x unified")  %>%
+  plotly::layout(
+    title = list(text = paste0('this is my title',
+                               '<br><sup>This is my subtitle','</sup>'),
+                 x = 0.02,
+                 xanchor = "left"
+    )
+  ) %>%
+  plotly::layout(
+    margin = list(
+      #l = 50, # less than default
+      # r = 40,
+      #b = 40, 
+      t = 50#,
+      #pad = 40
+      
+    )
+  )
+
+
+```
+
+
+add a title to the legend
+
+```{r}
+
+plotly::plot_ly(df, x = ~ date, 
+                y = ~ lifeExp, 
+                color =  ~country, 
+                type = "scatter", 
+                mode = "markers+lines") %>%
+  plotly::layout(hovermode="x unified")  %>%
+  plotly::layout(
+    title = list(text = paste0('this is my title',
+                               '<br><sup>This is my subtitle','</sup>'),
+                 x = 0.02,
+                 xanchor = "left"
+    )
+  ) %>%
+  plotly::layout(margin = list(t = 50)) %>% 
+  plotly::layout(legend = list(title = list(text = "country")))
+```
+
+
+use the x_axis title as a caption.
+
+I could also use an annotation, but I have having the guess how much margin I have to add and where to position it.
+https://stackoverflow.com/questions/45103559/plotly-adding-a-source-or-caption-to-a-chart
+
+
+```{r}
+
+plotly::plot_ly(df, x = ~ date, 
+                y = ~ lifeExp, 
+                color =  ~country, 
+                type = "scatter", 
+                mode = "markers+lines") %>%
+  plotly::layout(hovermode="x unified")  %>%
+  plotly::layout(
+    title = list(text = paste0('this is my title',
+                               '<br><sup>This is my subtitle','</sup>'),
+                 x = 0.02,
+                 xanchor = "left"
+    )
+  ) %>%
+  plotly::layout(margin = list(t = 50)) %>% 
+  plotly::layout(legend = list(title = list(text = "country"))) %>%
+  plotly::layout(
+    xaxis = list(
+      title = list(text = "<sup>source: gapminder</sup>")
+    )
+  )
+```
+
+adjust the title size to fit ggplot theme.   
+
+```{r}
+
+plotly::plot_ly(df, x = ~ date, 
+                y = ~ lifeExp, 
+                color =  ~country, 
+                type = "scatter", 
+                mode = "markers+lines") %>%
+  plotly::layout(hovermode="x unified")  %>%
+  plotly::layout(
+    title = list(text = paste0('this is my title',
+                               '<br><sup>This is my subtitle','</sup>'),
+                 x = 0.02,
+                 xanchor = "left",
+                 font = list(size =ggplot2::theme_get()$text$size  * 1.4)
+    )
+  ) %>%
+  plotly::layout(margin = list(t = 50)) %>% 
+  plotly::layout(legend = list(title = list(text = "country",
+                                            font = list(size = ggplot2::theme_get()$text$size)),
+                               font = list(size = ggplot2::theme_get()$text$size * as.numeric(ggplot2::theme_get()$axis.text$size ))
+  )
+  ) %>%
+  plotly::layout(
+    xaxis = list(
+      title = list(text = "<sup>source: gapminder</sup>",
+                   font = list(size = ggplot2::theme_get()$text$size)),
+      tickfont = list(size = ggplot2::theme_get()$text$size * as.numeric(ggplot2::theme_get()$axis.text$size ))
+    )
+  ) %>% 
+  plotly::layout(
+    yaxis = list(
+      title = list(text = "lifeExp", font = list(size = ggplot2::theme_get()$text$size)),
+      tickfont = list(size = ggplot2::theme_get()$text$size * as.numeric(ggplot2::theme_get()$axis.text$size ))
+    )
+  )  
+```
+
+pick the color palette.
+note, when passing a vector of colors, you have to give the exact number of colors, otherwise it will interpolate.  
+
+here is my palette:
+```{r}
+scales::show_col(pal)
+```
+
+
+
+here is what happens if I don't have the correct number of colors in the palette (9, colors, 8 countries).. what happens from "yellow" onward?
+
+```{r}
+plotly::plot_ly(df, x = ~ date, 
+                y = ~ lifeExp, 
+                color =  ~country, 
+                colors = pal,
+                type = "scatter", 
+                mode = "markers+lines") %>%
+  plotly::layout(hovermode="x unified")  %>%
+  plotly::layout(
+    title = list(text = paste0('Colors randomly interpolated because I provided 9 colors and 8 countries',
+                               '<br><sup>This is my subtitle','</sup>'),
+                 x = 0.02,
+                 xanchor = "left",
+                 font = list(size =ggplot2::theme_get()$text$size  * 1.4)
+    )
+  ) %>%
+  plotly::layout(margin = list(t = 50)) %>% 
+  plotly::layout(legend = list(title = list(text = "country",
+                                            font = list(size = ggplot2::theme_get()$text$size)),
+                               font = list(size = ggplot2::theme_get()$text$size * as.numeric(ggplot2::theme_get()$axis.text$size ))
+  )
+  ) %>%
+  plotly::layout(
+    xaxis = list(
+      title = list(text = "<sup>source: gapminder</sup>",
+                   font = list(size = ggplot2::theme_get()$text$size)),
+      tickfont = list(size = ggplot2::theme_get()$text$size * as.numeric(ggplot2::theme_get()$axis.text$size ))
+    )
+  ) %>% 
+  plotly::layout(
+    yaxis = list(
+      title = list(text = "lifeExp", font = list(size = ggplot2::theme_get()$text$size)),
+      tickfont = list(size = ggplot2::theme_get()$text$size * as.numeric(ggplot2::theme_get()$axis.text$size ))
+    )
+  )  
+```
+
+
+
+
+here is the proper way (pal[1:8])
+
+```{r}
+plotly::plot_ly(df, x = ~ date, 
+                y = ~ lifeExp, 
+                color =  ~country, 
+                colors = pal[1:8],
+                type = "scatter", 
+                mode = "markers+lines") %>%
+  plotly::layout(hovermode="x unified")  %>%
+  plotly::layout(
+    title = list(text = paste0('this is my title',
+                               '<br><sup>This is my subtitle','</sup>'),
+                 x = 0.02,
+                 xanchor = "left",
+                 font = list(size =ggplot2::theme_get()$text$size  * 1.4)
+    )
+  ) %>%
+  plotly::layout(margin = list(t = 50)) %>% 
+  plotly::layout(legend = list(title = list(text = "country",
+                                            font = list(size = ggplot2::theme_get()$text$size)),
+                               font = list(size = ggplot2::theme_get()$text$size * as.numeric(ggplot2::theme_get()$axis.text$size ))
+  )
+  ) %>%
+  plotly::layout(
+    xaxis = list(
+      title = list(text = "<sup>source: gapminder</sup>",
+                   font = list(size = ggplot2::theme_get()$text$size)),
+      tickfont = list(size = ggplot2::theme_get()$text$size * as.numeric(ggplot2::theme_get()$axis.text$size ))
+    )
+  ) %>% 
+  plotly::layout(
+    yaxis = list(
+      title = list(text = "lifeExp", font = list(size = ggplot2::theme_get()$text$size)),
+      tickfont = list(size = ggplot2::theme_get()$text$size * as.numeric(ggplot2::theme_get()$axis.text$size ))
+    )
+  )  
+```
+
+format y axis as percent, format x axis as date
+note, I used %-d  instead of %d to remove left-padding with 0  ( I want Jan 1,  not Jan 01)
+
+```{r}
+plotly::plot_ly(df, x = ~ date, 
+                y = ~ pop_percent, 
+                color =  ~country, 
+                colors = pal[1:8],
+                type = "scatter", 
+                mode = "markers+lines") %>%
+  plotly::layout(hovermode="x unified")  %>%
+  plotly::layout(
+    title = list(text = paste0('this is my title',
+                               '<br><sup>This is my subtitle','</sup>'),
+                 x = 0.02,
+                 xanchor = "left",
+                 font = list(size =ggplot2::theme_get()$text$size  * 1.4)
+    )
+  ) %>%
+  plotly::layout(margin = list(t = 50)) %>% 
+  plotly::layout(legend = list(title = list(text = "country",
+                                            font = list(size = ggplot2::theme_get()$text$size)),
+                               font = list(size = ggplot2::theme_get()$text$size * as.numeric(ggplot2::theme_get()$axis.text$size ))
+  )
+  ) %>%
+  plotly::layout(
+    xaxis = list(
+      title = list(text = "<sup>source: gapminder</sup>",
+                   font = list(size = ggplot2::theme_get()$text$size)),
+      tickfont = list(size = ggplot2::theme_get()$text$size * as.numeric(ggplot2::theme_get()$axis.text$size )),
+      tickformat = "%b %-d<br>%Y"
+    )
+  ) %>% 
+  plotly::layout(
+    yaxis = list(
+      title = list(text = "pop_percent", font = list(size = ggplot2::theme_get()$text$size)),
+      tickfont = list(size = ggplot2::theme_get()$text$size * as.numeric(ggplot2::theme_get()$axis.text$size )),
+      tickformat = ".0%"
+    )
+  )  
+```
+
+
+
+
+# A single_plotly_timeseries function  
+
+```{r}
+single_plotly_timeseries <-  function(df,  x_var, y_var, color_var = NULL, caption = NULL, title = NULL, subtitle = NULL,text_size = 15, tickformat = NULL, showlegend = TRUE,  ...) {
+  
+  
+  if (!is.null(subtitle)){ complete_title <- paste0(title, "<br><sup>", subtitle, "</sup>")}
+  else{complete_title <- title}
+  
+  # if(!is.null(title)){ top_margin <- pmax(50, text_size+2)
+  # } else {top_margin <- pmax(15, text_size+2) }
+  
+  top_margin <- pmax(15, text_size+2) +  as.numeric(!is.null(title))*2*text_size + as.numeric(!is.null(subtitle)) *2 *text_size
+  max_abs_y_var <- max(abs(df[y_var]), na.rm = TRUE)
+  
+  plotly::plot_ly(df, x = ~.data[[x_var]], y = ~.data[[y_var]], ...) %>%  
+    { if(!is.null(color_var)){ # add color var if required
+      plotly::add_trace(.,
+                        type = "scatter",
+                        mode = "markers+lines+text",
+                        color =  ~.data[[color_var]],
+                        showlegend = showlegend
+      ) %>%
+        plotly::layout(
+          legend = list( # update legend fond and size
+            font = list(size = text_size * 0.8),
+            title = list(
+              text = color_var,
+              font = list(size = text_size)
+            )
+          )
+        )
+    } else{
+      plotly::add_trace(.,
+                        type = "scatter",
+                        mode = "markers+lines+text"
+      )
+    }
+    }  %>% 
+    plotly::layout(hovermode="x unified")  %>%
+    plotly::layout(
+      title = list(text = complete_title,
+                   x = 0.02,
+                   xanchor = "left",
+                   font = list(size =text_size  * 1.4)
+      )
+    ) %>%
+    plotly::layout(margin = list(t = top_margin)) %>%
+    plotly::layout(
+      xaxis = list(
+        title = list(text = paste0("<sup>", caption, "</sup>") ,
+                     font = list(size = text_size)),
+        tickfont = list(size = text_size * 0.8),
+        tickformat = "%b %-d<br>%Y"
+      )
+    ) %>%
+    plotly::layout(
+      yaxis = list(
+        title = list(text = y_var, font = list(size = text_size)),
+        tickfont = list(size = text_size * 0.8)#,
+        #tickformat = ".0%"
+      )
+    ) %>% 
+    { if(!is.null(tickformat)){ # if tickformat is set, use it
+      plotly::layout(.,  yaxis = list(tickformat = tickformat))
+    } else if (max_abs_y_var < 1){ # if no forced tickformat and maximum absolute value <1, then use percent
+      plotly::layout(.,  yaxis = list(tickformat = ".0%"))
+    } else {  # just use the default tick format
+      .}
+    } 
+}
+```
+
+function demo:
+```{r}
+single_plotly_timeseries(df, "date", "lifeExp", "country", title = "Clever title", subtitle = "cunning subtitle", caption = "source: gapminder")
+```
+
+function demo, auto set yaxis to format : 
+```{r}
+single_plotly_timeseries(df, "date", "pop_percent", "country", title = "Clever title", subtitle = "cunning subtitle", caption = "source: gapminder")
+```
+
+function demo, use ... to set height
+```{r}
+single_plotly_timeseries(df, "date", "pop_percent", "country", title = "Clever title", subtitle = "cunning subtitle", caption = "source: gapminder", height = 800)
+```
+
+
+
+# subplots  
+
+```{r}
+p1 <- plot_ly(economics, x = ~date, y = ~unemploy) %>% 
+  add_lines(name = "unemploy")
+p2 <- plot_ly(economics, x = ~date, y = ~uempmed) %>% 
+  add_lines(name = "uempmed")
+subplot(p1, p2)
+```
+## subplot with colors  
+adding colors naively lets to having each country twice in the legend : 
+
+```{r}
+p1 <- plot_ly(df, x = ~date, y = ~lifeExp, color = ~ country) %>% 
+  add_trace(mode = "markers+lines", type = "scatter")
+p2 <- plot_ly(df, x = ~date, y = ~pop_percent, color = ~ country) %>% 
+  add_trace(mode = "markers+lines", type = "scatter") 
+subplot(p1, p2)
+```
+
+I must specify showlegend= FALSE in all the subplots after the first one: 
+```{r}
+p1 <- plot_ly(df, x = ~date, y = ~lifeExp, color = ~ country) %>% 
+  add_trace(mode = "markers+lines", type = "scatter")
+p2 <- plot_ly(df, x = ~date, y = ~pop_percent, color = ~ country) %>% 
+  add_trace(mode = "markers+lines", type = "scatter", showlegend = FALSE)  # only add color legend in first plot
+subplot(p1, p2)
+```
+
+
+I can specify nrows and shareX. titleY is also fun, to keep the y-axis title
+```{r}
+p1 <- plot_ly(df, x = ~date, y = ~lifeExp, color = ~ country) %>% 
+  add_trace(mode = "markers+lines", type = "scatter")
+p2 <- plot_ly(df, x = ~date, y = ~pop_percent, color = ~ country) %>% 
+  add_trace(mode = "markers+lines", type = "scatter", showlegend = FALSE)  # only add color legend in 1 place
+subplot(p1, p2, nrows = 2, shareX= TRUE, titleY = TRUE)
+```
+
+
+test with single_plotly_timeseries
+note: they must have the same title / caption otherwise it doesnt get displayed?
+```{r}
+
+p1 <- single_plotly_timeseries(df, "date", "pop_percent", "country", title = "Clever title", subtitle = "cunning subtitle", caption = "source: gapminder", showlegend = TRUE)
+
+p2 <- single_plotly_timeseries(df, "date", "lifeExp", "country", title = "Clever title", subtitle = "cunning subtitle", caption = "source: gapminder", showlegend = FALSE) 
+
+subplot(p1, p2, nrows = 2, shareX= TRUE, titleY = TRUE)
+```
+
+
+
+
+# facets    
+
+
+a function for paneling found in Carson's book  https://plotly-r.com/arranging-views
+
+```{r}
+panel <- .  %>% 
+  plot_ly(x = ~date, y = ~value) %>%
+  add_lines() %>%
+  add_annotations(
+    text = ~unique(variable),
+    x = 0.5,
+    y = 1,
+    yref = "paper",
+    xref = "paper",
+    yanchor = "bottom",
+    showarrow = FALSE,
+    font = list(size = 15)
+  ) %>%
+  layout(
+    showlegend = FALSE,
+    shapes = list(
+      type = "rect",
+      x0 = 0,
+      x1 = 1,
+      xref = "paper",
+      y0 = 0, 
+      y1 = 16,
+      yanchor = 1,
+      yref = "paper",
+      ysizemode = "pixel",
+      fillcolor = toRGB("gray80"),
+      line = list(color = "transparent")
+    )
+  )
+
+
+economics_long %>%
+  group_by(variable) %>%
+  do(p = panel(.)) %>%
+  subplot(nrows = NROW(.), shareX = TRUE)
+```
+
+
+
+naively adding annotations to my colored plot 
+
+
+```{r}
+p1 <- plot_ly(df, x = ~date, y = ~lifeExp, color = ~ country) %>% 
+  add_trace(mode = "markers+lines", type = "scatter") %>% 
+  add_annotations(
+    text = "lifeExp",
+    x = 0.5,
+    y = 1,
+    yref = "paper",
+    xref = "paper",
+    yanchor = "bottom",
+    showarrow = FALSE,
+    font = list(size = 15)
+  ) %>%
+  layout(
+    shapes = list(
+      type = "rect",
+      x0 = 0,
+      x1 = 1,
+      xref = "paper",
+      y0 = 0,
+      y1 = 16,
+      yanchor = 1,
+      yref = "paper",
+      ysizemode = "pixel",
+      fillcolor = toRGB("gray80"),
+      line = list(color = "transparent")
+    )
+  )
+p2 <- plot_ly(df, x = ~date, y = ~pop_percent, color = ~ country) %>% 
+  add_trace(mode = "markers+lines", type = "scatter", showlegend = FALSE) %>%    # only add color legend in 1 place
+  add_annotations(
+    text = "pop_percent",
+    x = 0.5,
+    y = 1,
+    yref = "paper",
+    xref = "paper",
+    yanchor = "bottom",
+    showarrow = FALSE,
+    font = list(size = 15)
+  ) %>%
+  layout(
+    shapes = list(
+      type = "rect",
+      x0 = 0,
+      x1 = 1,
+      xref = "paper",
+      y0 = 0,
+      y1 = 16,
+      yanchor = 1,
+      yref = "paper",
+      ysizemode = "pixel",
+      fillcolor = toRGB("gray80"),
+      line = list(color = "transparent")
+    )
+  )
+subplot(p1, p2, nrows = 2, shareX= TRUE)
+
+
+```
+
+```{r}
+add_facet_title <- function(plotly, facet_title, text_size  = 15){
+  plotly %>% 
+    add_annotations(
+      text = facet_title,
+      x = 0.5,
+      y = 1,
+      yref = "paper",
+      xref = "paper",
+      yanchor = "bottom",
+      showarrow = FALSE,
+      font = list(size = text_size)
+    ) %>%
+    layout(
+      shapes = list(
+        type = "rect",
+        x0 = 0,
+        x1 = 1,
+        xref = "paper",
+        y0 = 0,
+        y1 = (text_size+1),
+        yanchor = 1,
+        yref = "paper",
+        ysizemode = "pixel",
+        fillcolor = toRGB("gray80"),
+        line = list(color = "transparent")
+      )
+    )
+}
+```
+test de ma fonction à panel title  
+```{r}
+plot_ly(df, x = ~date, y = ~lifeExp, color = ~ country) %>% 
+  add_trace(mode = "markers+lines", type = "scatter") %>%
+  add_facet_title("lifeExp") 
+```
+```{r}
+df_plots <- df_long %>% 
+  dplyr::nest_by(variable) %>% 
+  ungroup() %>% 
+  dplyr::mutate(
+    first_row  = row_number() == 1) %>%
+  rowwise() %>% 
+  dplyr::mutate(
+    plot = list(
+      single_plotly_timeseries(
+        data, "date", "value", "country", showlegend = first_row) %>%
+        add_facet_title(variable)  %>%
+        layout(yaxis= list(title = ""))))
+
+subplot(df_plots$plot, nrows= nrow(df_plots), shareX = TRUE)
+```
+
+let's create a function that wraps both
+
+```{r}
+plotly_timeseries <- function(df,  x_var, y_var, color_var = NULL, facet_var = NULL, caption = NULL, title = NULL, subtitle = NULL,text_size = 15, tickformat = NULL, showlegend = TRUE,  ...) {
+  
+  
+  if(!is.null(facet_var)){
+  
+  
+  df_plots <- df %>% 
+    dplyr::nest_by(.data[[facet_var]]) %>% 
+    ungroup() %>% 
+    dplyr::mutate(
+      first_row  = row_number() == 1) %>%
+    rowwise() %>% 
+    dplyr::mutate(
+      plot = list(
+        single_plotly_timeseries(
+          data, x_var =  x_var, y_var = y_var, color_var = color_var, 
+          caption = caption, title = title, subtitle = subtitle, text_size= text_size, tickformat = tickformat,
+          showlegend = as.logical(min(showlegend, first_row)), ...) %>%
+          add_facet_title(.data[[facet_var]], text_size)  %>%
+          layout(yaxis= list(title = ""))
+      )
+    )
+  
+  
+  subplot(df_plots$plot, nrows= nrow(df_plots), shareX = TRUE)
+  }else {
+    single_plotly_timeseries(
+          df, x_var =  x_var, y_var = y_var, color_var = color_var, showlegend = showlegend,
+          caption = caption, title = title, subtitle = subtitle, text_size= text_size, tickformat = tickformat, ...)
+
+
+  }
+  
+  
+  
+}
+```
+
+
+plotly_timeseries with a facet:
+```{r}
+plotly_timeseries(df_long, 
+                   x_var = "date",
+                   y_var =  "value", 
+                   color_var = "country",
+                   facet_var = "variable", 
+                   title = "My title", 
+                   subtitle = "my subtitle", 
+                   caption = "source: gapminder")  
+```
+
+
+plotly_timeseries without  facet:
+```{r}
+plotly_timeseries(df, x_var = "date",
+                   y_var =  "lifeExp", 
+                   color_var = "country", 
+                   showlegend = TRUE, 
+                   title = "My title", 
+                   subtitle = "my subtitle", 
+                   caption = "source: gapminder")
+```
+
