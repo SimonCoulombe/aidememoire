@@ -2,7 +2,7 @@
 title: "plotly"
 description: "argh"
 author: Simon Coulombe
-date: 2024-098-24
+date: 2024-09-24
 categories: [r, plotly]
 lang: fr
 ---
