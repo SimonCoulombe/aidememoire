@@ -1,0 +1,19 @@
+---
+title: "Désactiver touche pour changer langue du clavier (ctrl-shift"
+description: |
+    C'est chiant!
+date: "2024-12-12"
+format:
+  html:
+    code-fold: false
+---
+
+Empêcher clavier de changer de langue  
+"Bouton windows"  
+" paramètres de saisie "  
+" Paramètres de claviers avancés "  
+" touches de raccourci de langue d'entrée "  
+" modifier la séquence de touches "  
+"Changer la langue d'entrée :  non assignée "  
+"Changer la disposition du clavier :  non assignée "  
+OK  

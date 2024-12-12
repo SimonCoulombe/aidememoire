@@ -1,0 +1,13 @@
+---
+title: "preview markdown"
+author: Simon Coulombe
+description: |
+  Nobody will remember....
+date: 2024-12-12
+format:
+  html:
+    code-fold: false
+---
+
+Preview:  ctrl-shift-V      
+split screen:  ctrl-<   

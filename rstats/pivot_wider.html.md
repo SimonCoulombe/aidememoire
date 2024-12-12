@@ -1,0 +1,24 @@
+---
+title: "pivot_wider pivot_longer"
+author: Simon Coulombe
+description: |
+  Nobody will remember....
+date: 2024-12-12
+format:
+  html:
+    code-fold: false
+---
+
+
+
+pivot_wider(
+  names_from = var,
+  values_from = c(value)
+)
+
+ pivot_longer(
+   cols = starts_with("wk"),
+   names_to = "week",
+   values_to = "rank"
+  )  
+  

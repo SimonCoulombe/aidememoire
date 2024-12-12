@@ -1,0 +1,45 @@
+---
+title: "setup vscode"
+author: Simon Coulombe
+description: |
+  Nobody will remember....
+date: 2024-12-12
+format:
+  html:
+    code-fold: false
+---
+
+Video vscode setup que j'aime bien:  
+
+https://www.youtube.com/watch?v=mpk4Q5feWaw  
+
+## settings   
+Open the command palette:  either `F1` or `ctrl`-`shift`-`P`
+
+settings.json can be accessed from command palette, "open settings"  , "open user settings.json"
+
+file location: 
+%APPDATA%\Code\User\settings.json
+
+## extension    
+
+### SQLtools    
+
+pour formatter sql.  J'ai mis ça dans mon settings.json:  
+```
+   "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[sql]": {         "editor.formatOnSave": true,         "editor.defaultFormatter": "mtxr.sqltools"     },
+```
+
+### SSSHFS   (vs Remote explorer?)    
+
+
+

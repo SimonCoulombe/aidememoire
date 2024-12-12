@@ -9,6 +9,8 @@ website:
       - rstats.qmd  
       - sql.qmd        
       - python.qmd  
+      - vscode.qmd        
+      - windows.qmd        
     style: "docked"  
     search: true
     collapse-level: 1

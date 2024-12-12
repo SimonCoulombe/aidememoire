@@ -395,7 +395,7 @@ single_plotly_timeseries <-  function(df,  x_var, y_var, color_var = NULL, capti
   
   plotly::plot_ly(df, x = ~.data[[x_var]], y = ~.data[[y_var]], ...) %>%  
     { if(!is.null(color_var)){ # add color var if required
-      plotly::add_trace(.,
+      plotly::add_lines(.,
                         type = "scatter",
                         mode = "markers+lines+text",
                         color =  ~.data[[color_var]],
