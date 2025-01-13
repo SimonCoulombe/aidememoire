@@ -1,0 +1,12 @@
+---
+title: "Github view commit tree of all branches"
+description: |
+date: "2025-01-13"
+format:
+  html:
+    code-fold: false
+---
+
+It's under insights - network.   
+
+source: https://stackoverflow.com/questions/32237604/displaying-the-commit-tree-in-github

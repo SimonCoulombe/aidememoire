@@ -1,0 +1,15 @@
+---
+title: "delete all merged git branch (alias  gbpurge)"
+description: |
+    housekeeping local branches
+date: "2025-01-13"
+format:
+  html:
+    code-fold: false
+---
+
+Just add this to ~/.bashrc 
+
+`alias gbpurge='git branch --merged | grep -Ev "(\*|master|develop|staging)" | xargs -n 1 git branch -d'`
+
+source : https://stackoverflow.com/questions/17983068/delete-local-git-branches-after-deleting-them-on-the-remote-repo

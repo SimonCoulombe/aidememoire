@@ -7,6 +7,8 @@ website:
   sidebar:
     contents:
       - rstats.qmd  
+      - git.qmd            
+      - github.qmd                  
       - sql.qmd        
       - python.qmd  
       - vscode.qmd        
