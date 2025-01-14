@@ -11,6 +11,10 @@ more info:
 https://engineering-shiny.org/structuring-project.html#communication-between-modules
 https://rtask.thinkr.fr/communication-between-modules-and-its-whims/
 
+
+note: rhino doesnt recommend the kitchen sink approach of reactiveValues.. see their vignette here
+https://rdrr.io/github/Appsilon/rhino/f/vignettes/how-to/communicate-between-modules.Rmd
+
 ```
 
 library(shiny)
