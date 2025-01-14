@@ -13,6 +13,13 @@ more info:
 https://engineering-shiny.org/structuring-project.html#communication-between-modules
 https://rtask.thinkr.fr/communication-between-modules-and-its-whims/
 
+
+note: rhino doesnt recommend the kitchen sink approach of reactiveValues.. see their vignette here
+https://rdrr.io/github/Appsilon/rhino/f/vignettes/how-to/communicate-between-modules.Rmd
+
+note rstudio blog post [Modularizing Shiny app code](https://shiny.posit.co/r/articles/improve/modules/) , how return reactive from server function..
+
+
 ```
 
 library(shiny)
