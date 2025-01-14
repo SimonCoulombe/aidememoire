@@ -1,0 +1,73 @@
+---
+title: "shiny - _demo module using  strategie du petit r"
+author: Simon Coulombe
+date: 2025-01-16
+categories: [r, shiny]
+lang: fr
+---
+
+
+```
+#' selectfacet UI Function
+#'
+#' @description A shiny Module.
+#'
+#' @param id,input,output,session Internal parameters for {shiny}.
+#'
+#' @noRd
+#'
+#' @importFrom shiny NS tagList
+mod_inputSelectFacet_ui <- function(id) {
+  ns <- NS(id)
+  tagList(
+    selectizeInput(ns("facet_var"),
+                   label = tooltip(
+                     trigger = list(
+                       "Choose facet",
+                       bsicons::bs_icon("info-circle")
+                     ),
+                     '(OPTIONAL) The plots will have one subplot ("facet") for each individual values of this variable'
+                   ),
+                   choices = NULL,
+                   multiple = FALSE,
+                   selected = FALSE),
+    textInput(ns("breaks_facet_var"),
+              label = tooltip(
+                trigger = list(
+                  "Bands (facets)",
+                  bsicons::bs_icon("info-circle")
+                ),
+                "(OPTIONAL) If the facet variable is a numeric, you can create custom bands. Just type in numbers separed by commas.  You can use -Inf and Inf to represent infinity.  ex:  0,30,60,Inf"
+              ),
+              placeholder = "ex: 0,10,20,Inf") #https://stackoverflow.com/questions/55615825/allowing-multiple-numbers-in-one-numericinput-in-shiny
+  )
+}
+
+#' selectfacet Server Functions
+#'
+#' @noRd
+mod_inputSelectFacet_server <- function(id, r) {
+  moduleServer(id, function(input, output, session) {
+    ns <- session$ns
+    observe({
+      aitoolbox::message_with_style_based_on_namespace("updating SelectFacetUI",verbose = r$verbose)
+      facets <- c("myvar",r$acceptable_dimensions)
+      updateSelectizeInput( session, "facet_var", choices = facets, selected = FALSE)
+    })
+  })
+}
+
+
+mod_inputSelectFacet_demo <- function(){
+  r <- reactiveValues()
+  r$verbose <- TRUE
+  r$acceptable_dimensions <- c("blue", "green", "red")
+
+  ui <- fluidPage(mod_inputSelectFacet_ui("x"))
+  server <- function(input, output, session) {
+    mod_inputSelectFacet_server("x", r)
+  }
+  shinyApp(ui, server)
+}
+#mod_inputSelectFacet_demo()
+```

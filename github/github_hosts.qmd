@@ -1,0 +1,24 @@
+---
+title: "Github Warning: the ECDSA host key for 'github.com' differs from the key for the IP address"
+description: |
+date: "2025-01-14"
+format:
+  html:
+    code-fold: false
+---
+
+
+```
+Warning: the ECDSA host key for 'github.com' differs from the key for the IP address '140.82.112.3'
+Offending key for IP in /home/me/.ssh/known_hosts:6
+Matching host key in /home/me/.ssh/known_hosts:17
+Are you sure you want to continue connecting (yes/no)? yes
+```
+
+solution as per github:
+https://github.blog/news-insights/company-news/we-updated-our-rsa-ssh-host-key/
+
+```
+$ ssh-keygen -R github.com  
+$ curl -L https://api.github.com/meta | jq -r '.ssh_keys | .[]' | sed -e 's/^/github.com /' >> ~/.ssh/known_hosts  
+```
