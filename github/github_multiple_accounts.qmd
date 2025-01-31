@@ -1,0 +1,74 @@
+---
+title: "Github multiple account"
+description: |
+date: "2025-01-13"
+format:
+  html:
+    code-fold: false
+---
+
+basically, I follow this gist, I just didnt use ssh-add
+source:  https://gist.github.com/rahularity/86da20fe3858e6b311de068201d279e3
+
+
+
+create a second set of ssh key for the secondary account: 
+```
+cd ~/.ssh
+ssh-keygen -t rsa -C "my_email_address" -f "my_git_username"
+```
+
+
+-C stands for comment to help identify your ssh key
+-f stands for the file name where your ssh key get saved
+
+...
+ obviously add the public key to the github account
+...
+
+
+Create a Config File and Make Host Entries
+```
+nano ~/.ssh/config
+
+     #my_git_username account
+     Host github.com-my_git_username
+          HostName github.com
+          User git
+          IdentityFile ~/.ssh/github-my_git_username
+```
+
+clone using the  -my_git-username alias :
+```
+ git clone git@github.com-{your-username}:{owner-user-name}/{the-repo-name}.git
+[e.g.] git clone git@github.com-my-git-username:rahul-personal/TestRepo.git
+```
+
+
+
+
+Finally
+
+From now on, to ensure that our commits and pushes from each repository on the system uses the correct GitHub user - we will have to configure user.email and user.name in every repository freshly cloned or existing before.
+
+To do this use the following commands.
+
+     git config user.email "my_office_email@gmail.com"
+     git config user.name "Rahul Pandey"
+     
+     git config user.email "my-personal-email@gmail.com"
+     git config user.name "Rahul Pandey"
+
+Pick the correct pair for your repository accordingly.
+
+To push or pull to the correct account we need to add the remote origin to the project
+
+     git remote add origin git@github.com-rahul-personal:rahul-personal
+     
+     git remote add origin git@github.com-rahul-office:rahul-office
+
+Now you can use:
+
+     git push
+     
+     git pull
