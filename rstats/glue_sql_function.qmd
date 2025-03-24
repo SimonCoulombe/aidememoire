@@ -11,10 +11,10 @@ lang: fr
 ```{r}
 library(ggplot2)
 library(dbplyr)
-library(aitoolbox)
+#library(aitoolbox)
 library(dplyr)
 library(DBI)
-pool <- aitoolbox::connect_to_azure()
+#pool <- aitoolbox::connect_to_azure()
 
 auto_plot <- function(pool, my_variable_name, table1, table2){
   a_float_table <- DBI::dbQuoteIdentifier(DBI::Id(schema = "BI_FLOAT_AY",   table = table1), conn = pool)

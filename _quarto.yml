@@ -8,7 +8,8 @@ website:
     contents:
       - rstats.qmd  
       - git.qmd            
-      - github.qmd                  
+      - github.qmd
+      - homeassistant.qmd                  
       - sql.qmd        
       - python.qmd  
       - vscode.qmd        

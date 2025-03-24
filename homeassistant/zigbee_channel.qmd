@@ -1,0 +1,21 @@
+---
+title: "Selecting zigbee channel to reduce interference"
+date: "2025-11-11"
+format:
+  html:
+    code-fold: false
+---
+
+Cet [article](https://smarthomescene.com/guides/how-to-build-a-stable-and-robust-zigbee-network/) expliquant comment avoir un zigbee network solide et quels channels de zigbee et wifi overlappent:
+
+![](images/zigbee-wifi-channels-overlap-2.4ghz-1536x864.jpg.webp)
+
+![](images/clipboard-2000226246.png)
+
+Comme mon zigbee est sur le channel 15:
+
+![](images/clipboard-35959443.png)
+
+J'ai mis mon wifi 2.4 GHz sur le channel 11:
+
+![](images/clipboard-3057511631.png)
