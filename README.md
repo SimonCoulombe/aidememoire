@@ -1,5 +1,1 @@
-graph TD
-  A[Raw Data] --> B[Preprocessing]
-  B --> C[Model Training]
-  C --> D[Evaluation]
-  D --> E[Deployment]
+quick quarto blog with code snippets I dont want to forget, hosted at https://aidememoire.netlify.app/
