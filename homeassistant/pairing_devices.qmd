@@ -1,0 +1,15 @@
+---
+title: "Notes on pairing devices"
+date: "2024-11-11"
+format:
+  html:
+    code-fold: false
+---
+
+Ikea light bulbs (tradfri) and switches ([reddit](https://www.reddit.com/r/homeassistant/comments/fw5d0i/ikea_tradfri_and_zigbee2mqtt/))
+
+`For the bulbs you turn them off and on 6 times and then it starts  blinking and just stop there, then it should be automatically discovered  (at least it did for me with zigbee2mqtt).`
+
+`For the remotes press pair button 4 times quick.`
+
+`See also https://www.zigbee2mqtt.io/information/supported_devices.html#ikea`
