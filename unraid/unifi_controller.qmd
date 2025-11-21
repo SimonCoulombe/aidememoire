@@ -1,0 +1,27 @@
+---
+title: "setting up Unifi controller Reborn on Unraid"
+date: "2025-11-21"
+format:
+  html:
+    code-fold: false
+---
+
+-   Ce thread reddit m'a dit d'utiliser unifi-controller-reborn https://www.reddit.com/r/unRAID/comments/1dac4ii/unifi_controller_docker/
+
+<!-- -->
+
+-   Ce gars dans le thread m'a dit où aller pour savoir quelle version mettre dans le repository:
+
+`As already mentioned: Unifi-Controller-Reborn works well. Make sure to read through the linked support forum post because it does not apply the latest version automatically.`
+
+`Some things to note as far as my experience goes:`
+
+```         
+"Source" in the template needs to be set to 11notes/unifi:8.1.127-unraid or whatever is recent according to the support thread
+
+I left the container in bridge mode as recommended
+
+Had to change "Inform Host" (in Settings - System - Advanced) to Override with Unraid IP, because it would not adopt my AP 
+```
+
+-   Enfin, j'ai eu un problème parce que port 1900 était déjà utilisé par jellyfin. J'Ai pas investigué pcq chatgpt m'a dit que j'en avais pas besoin, alors j'Ai juste enlevé le mapping à ce port.

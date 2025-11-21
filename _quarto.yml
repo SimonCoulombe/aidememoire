@@ -12,6 +12,7 @@ website:
       - homeassistant.qmd                  
       - sql.qmd        
       - python.qmd  
+      - unraid.qmd
       - vscode.qmd        
       - windows.qmd        
     style: "docked"  
