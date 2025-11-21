@@ -19,3 +19,7 @@ Comme mon zigbee est sur le channel 15:
 J'ai mis mon wifi 2.4 GHz sur le channel 11:
 
 ![](images/clipboard-3057511631.png)
+
+(EDIT) EN FAIT CE WIFI sur mon routeur est disabled.. c'est sur mon ubiquiti nanohd qu'il faut changer le port:
+
+![](images/clipboard-3010951102.png)
