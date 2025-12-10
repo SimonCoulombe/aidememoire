@@ -7,6 +7,9 @@ format:
 ---
 
 
+
+
+
   
 ```bash
 create table my_schema.my_sample 

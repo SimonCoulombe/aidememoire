@@ -9,6 +9,9 @@ lang: fr
 
 
 
+
+
+
 A month ago I stumbled on this [blogpost](https://emilyriederer.netlify.app/post/shiny-modules/)  by Emiliy Riederer that changed the way I develop my shiny modules and I wanted to spread the good news.
  
 Short version, for each module, I also create a _demo() function that generates a tiny shiny app with just the module in it and whatever fake data it needs.  Fastest way to develop/debug a shiny app without launching to full thing to check if something worked.  I leave the _demo() function code in the .R and  I  just comment out the call  to the "_demo()"  function.

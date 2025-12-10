@@ -1,0 +1,32 @@
+---
+title: "authorized_keys file is actually /etc/ssh/root.pubkeys"
+date: "2025-12-10"
+format:
+  html:
+    code-fold: false
+---
+
+unraid expects my authorizeD_keys here :\
+/etc/ssh/root.pubkeys
+
+not here :
+
+\~/.ssh/authorized_keys
+
+tel que vu dans mon /etc/ssh/sshd_config:
+
+```         
+The default is to check both .ssh/authorized_keys and .ssh/authorized_keys2
+```
+
+```         
+but this is overridden so installations will only check .ssh/authorized_keys
+```
+
+```         
+replace by line below par Simon following ken-ji post here https://forums.unraid.net/topic/51160-passwordless-ssh-login/#AuthorizedKeysFile .ssh/authorized_keys
+```
+
+```         
+AuthorizedKeysFile /etc/ssh/%u.pubkeys #AuthorizedPrincipalsFile none
+```

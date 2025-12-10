@@ -1,0 +1,87 @@
+---
+title: "Script to pause seeding torrents before invoking mover"
+date: "2025-11-16"
+format:
+  html:
+    code-fold: false
+---
+
+My unraid mover almost never moves the big linux ISOs my torrenting docker downloaded to the cache because it can't move files that are being seeded as they are active.
+
+This scripts pauses all seeding torrents, runs the mover, then resumes the torrents.
+
+I set it up to run every day at 2h30 AM using "user scripts"
+
+```         
+#!/bin/bash
+
+# Script to pause 100% completed torrents, run mover, then resume
+# Place in User Scripts plugin
+
+DELUGE_CONTAINER="binhex-delugevpn"
+DELUGE_USER="admin"
+DELUGE_PASS="deluge"
+
+# Helper function to add timestamps
+log() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
+}
+
+log "Starting mover script"
+
+# Get list of 100% completed torrent hashes
+log "Finding completed torrents..."
+COMPLETED_TORRENTS=$(docker exec $DELUGE_CONTAINER deluge-console "connect 127.0.0.1:58846 $DELUGE_USER $DELUGE_PASS; info" | \
+    grep "^\[S\]   100%" | \
+    awk '{print $NF}')
+
+if [ -z "$COMPLETED_TORRENTS" ]; then
+    log "No completed torrents found to pause"
+else
+    TORRENT_COUNT=$(echo "$COMPLETED_TORRENTS" | wc -l)
+    log "Found $TORRENT_COUNT completed torrents to pause"
+    
+    # Build a single command string with all pause commands
+    PAUSE_COMMANDS="connect 127.0.0.1:58846 $DELUGE_USER $DELUGE_PASS"
+    for hash in $COMPLETED_TORRENTS; do
+        PAUSE_COMMANDS="$PAUSE_COMMANDS; pause $hash"
+    done
+    
+    # Execute all pauses in a single connection
+    log "Pausing all torrents..."
+    docker exec $DELUGE_CONTAINER deluge-console "$PAUSE_COMMANDS" > /dev/null 2>&1
+    log "All $TORRENT_COUNT torrents paused"
+fi
+
+# Wait for file handles to release
+log "Waiting 10 seconds for file handles to release..."
+sleep 10
+
+# Run the mover
+log "Running mover..."
+mover start
+
+# Wait for mover to actually finish
+log "Waiting for mover to complete..."
+while pgrep -x "mover" > /dev/null; do
+    sleep 60  # Check every minute
+done
+log "Mover finished!"
+
+# Resume all previously paused torrents
+if [ ! -z "$COMPLETED_TORRENTS" ]; then
+    log "Resuming torrents..."
+    
+    # Build a single command string with all resume commands
+    RESUME_COMMANDS="connect 127.0.0.1:58846 $DELUGE_USER $DELUGE_PASS"
+    for hash in $COMPLETED_TORRENTS; do
+        RESUME_COMMANDS="$RESUME_COMMANDS; resume $hash"
+    done
+    
+    # Execute all resumes in a single connection
+    docker exec $DELUGE_CONTAINER deluge-console "$RESUME_COMMANDS" > /dev/null 2>&1
+    log "All torrents resumed"
+fi
+
+log "Script completed"
+```

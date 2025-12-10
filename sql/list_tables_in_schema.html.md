@@ -7,6 +7,9 @@ format:
 ---
 
 
+
+
+
   
 ```bash
 tables_available <- dbGetQuery(con,

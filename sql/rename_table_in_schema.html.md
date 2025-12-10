@@ -7,6 +7,9 @@ format:
 ---
 
 
+
+
+
   
 ```bash
 dbExecute(con,"rename object my_schema.test  to test_bak ;")

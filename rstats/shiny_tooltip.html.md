@@ -8,6 +8,9 @@ lang: fr
 
 
 
+
+
+
 from : https://rstudio.github.io/bslib/articles/tooltips-popovers/index.html
 
 Input labels

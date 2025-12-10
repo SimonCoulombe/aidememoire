@@ -9,6 +9,9 @@ lang: fr
 
 
 
+
+
+
 more info: 
 https://engineering-shiny.org/structuring-project.html#communication-between-modules
 https://rtask.thinkr.fr/communication-between-modules-and-its-whims/

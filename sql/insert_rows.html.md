@@ -7,6 +7,9 @@ format:
 ---
 
 
+
+
+
   
 ```bash
 INSERT INTO my_schema.my_table( character_column_name, numeric_column_name)
